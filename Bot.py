@@ -5,20 +5,13 @@ import uuid
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 
-# Configurar o logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
 # --- CONFIGURAÇÕES ---
-# Lê o token e a senha das variáveis de ambiente
-TOKEN = os.environ.get('TOKEN')
-SENHA_DO_BOT = os.environ.get('PASSWORD')
+TOKEN = '8265037048:AAHU9ModuYSrsm2zVxb8-FiKxbQF2zr4064'
+SENHA_DO_BOT = 'minha_senha_secreta'
 
-# A porta e a URL são fornecidas pelo Render
-PORT = int(os.environ.get('PORT', 8443))
-WEBHOOK_URL = os.environ.get('WEBHOOK_URL')
-
-# Conjunto para armazenar os IDs dos usuários autenticados
 usuarios_autenticados = set()
 
 # --- HANDLERS DE COMANDOS E MENSAGENS ---
@@ -93,19 +86,13 @@ async def download_video(update: Update, context) -> None:
             logging.info(f"Arquivo temporário {file_path} removido.")
 
 def main() -> None:
-    """Inicia o bot usando webhooks."""
     application = Application.builder().token(TOKEN).build()
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("acessar", acessar))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, download_video))
 
-    # Executa a aplicação usando webhooks
-    application.run_webhook(listen="0.0.0.0",
-                            port=PORT,
-                            url_path=TOKEN,
-                            webhook_url=WEBHOOK_URL)
-
+    application.run_polling()
 
 if __name__ == '__main__':
     main()
